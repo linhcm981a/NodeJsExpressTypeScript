@@ -5,6 +5,7 @@ import { config } from "./config/config";
 import Logging from "./library/Logging";
 import authorRoutes from "./routes/Author";
 import bookRoutes from "./routes/Book";
+import userRoutes from "./routes/User";
 
 const router = express();
 
@@ -57,6 +58,8 @@ const StartServer = () => {
   router.get("/home", (req, res, next) =>
     res.status(200).json({ hello: "world" })
   );
+  router.use('/users', userRoutes);
+
 
   router.use((req, res, next) => {
     const error = new Error("Not found");
