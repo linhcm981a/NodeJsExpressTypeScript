@@ -1,13 +1,14 @@
 import express from 'express';
-import controller from '../controllers/Book';
-import { Schemas, ValidateJoi } from '../middleware/Joi';
+import services from '../book/services';
+import { Schemas } from '../book/validators';
+import { ValidateJoi } from '../book/repo';
 
 const router = express.Router();
 
-router.post('/create', ValidateJoi(Schemas.book.create), controller.createBook);
-router.get('/:bookId', controller.readBook);
-router.get('/', controller.readAll);
-router.patch('/:bookId', ValidateJoi(Schemas.book.update), controller.updateBook);
-router.delete('/:bookId', controller.deleteBook);
+router.post('/create', ValidateJoi(Schemas.book.create),services.createBook);
+router.get('/:bookId',services.readBook);
+router.get('/',services.readAll);
+router.patch('/:bookId', ValidateJoi(Schemas.book.update),services.updateBook);
+router.delete('/:bookId',services.deleteBook);
 
 export = router;
