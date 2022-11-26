@@ -29,12 +29,6 @@ export const config = {
       secret: SERVER_TOKEN_SECRET
   }
   },
-
-//   token: {
-//     expireTime: SERVER_TOKEN_EXPIRETIME,
-//     issuer: SERVER_TOKEN_ISSUER,
-//     secret: SERVER_TOKEN_SECRET
-// }
 };
 
 export default config;

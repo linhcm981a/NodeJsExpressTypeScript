@@ -1,15 +1,20 @@
 import express from 'express';
-import services from '../author/services';
+import {  
+    createAuthor,
+    readAuthor,
+    readAll,
+    updateAuthor,
+    deleteAuthor,
+    ValidateJoi } from '../author/services';
 import { Schemas } from '../author/validators';
-import { ValidateJoi } from '../author/repo';
 
 
 const router = express.Router();
 
-router.post('/create', ValidateJoi(Schemas.author.create), services.createAuthor);
-router.get('/:authorId', services.readAuthor);
-router.get('/', services.readAll);
-router.patch('/:authorId', ValidateJoi(Schemas.author.update), services.updateAuthor);
-router.delete('/:authorId',services.deleteAuthor);
+router.post('/create', ValidateJoi(Schemas.author.create), createAuthor);
+router.get('/:authorId',readAuthor);
+router.get('/',readAll);
+router.patch('/:authorId', ValidateJoi(Schemas.author.update),updateAuthor);
+router.delete('/:authorId',deleteAuthor);
 
 export = router;

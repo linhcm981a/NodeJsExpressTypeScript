@@ -1,8 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import Author from "../author/models";
+import { ObjectSchema } from "joi";
+import Logging from "../library/Logging";
 
-const createAuthor = (req: Request, res: Response, next: NextFunction) => {
+export const createAuthor = (req: Request, res: Response, next: NextFunction) => {
   const { name } = req.body;
 
   const author = new Author({
@@ -16,7 +18,7 @@ const createAuthor = (req: Request, res: Response, next: NextFunction) => {
     .catch((error) => res.status(500).json({ error }));
 };
 
-const readAuthor = (req: Request, res: Response, next: NextFunction) => {
+export const readAuthor = (req: Request, res: Response, next: NextFunction) => {
   const authorId = req.params.authorId;
 
   return Author.findById(authorId)
@@ -28,13 +30,13 @@ const readAuthor = (req: Request, res: Response, next: NextFunction) => {
     .catch((error) => res.status(500).json({ error }));
 };
 
-const readAll = (req: Request, res: Response, next: NextFunction) => {
+export const readAll = (req: Request, res: Response, next: NextFunction) => {
   return Author.find()
     .then((authors) => res.status(200).json({ authors }))
     .catch((error) => res.status(500).json({ error }));
 };
 
-const updateAuthor = (req: Request, res: Response, next: NextFunction) => {
+export const updateAuthor = (req: Request, res: Response, next: NextFunction) => {
   const authorId = req.params.authorId;
 
   return Author.findById(authorId)
@@ -53,7 +55,7 @@ const updateAuthor = (req: Request, res: Response, next: NextFunction) => {
     .catch((error) => res.status(500).json({ error }));
 };
 
-const deleteAuthor = (req: Request, res: Response, next: NextFunction) => {
+export const deleteAuthor = (req: Request, res: Response, next: NextFunction) => {
   const authorId = req.params.authorId;
 
   return Author.findByIdAndDelete(authorId)
@@ -65,10 +67,16 @@ const deleteAuthor = (req: Request, res: Response, next: NextFunction) => {
     .catch((error) => res.status(500).json({ error }));
 };
 
-export default {
-  createAuthor,
-  readAuthor,
-  readAll,
-  updateAuthor,
-  deleteAuthor,
+export const ValidateJoi = (schema: ObjectSchema) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await schema.validateAsync(req.body);
+
+      next();
+    } catch (error) {
+      Logging.error(error);
+
+      return res.status(422).json({ error });
+    }
+  };
 };

@@ -1,8 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import Book from "../book/models";
+import { ObjectSchema } from "joi";
+import Logging from "../library/Logging";
 
-const createBook = (req: Request, res: Response, next: NextFunction) => {
+export const createBook = (req: Request, res: Response, next: NextFunction) => {
   const { author, title } = req.body;
 
   const book = new Book({
@@ -17,7 +19,7 @@ const createBook = (req: Request, res: Response, next: NextFunction) => {
     .catch((error) => res.status(500).json({ error }));
 };
 
-const readBook = (req: Request, res: Response, next: NextFunction) => {
+export const readBook = (req: Request, res: Response, next: NextFunction) => {
   const bookId = req.params.bookId;
 
   return Book.findById(bookId)
@@ -30,13 +32,13 @@ const readBook = (req: Request, res: Response, next: NextFunction) => {
     .catch((error) => res.status(500).json({ error }));
 };
 
-const readAll = (req: Request, res: Response, next: NextFunction) => {
+export const readAll = (req: Request, res: Response, next: NextFunction) => {
   return Book.find()
     .then((books) => res.status(200).json({ books }))
     .catch((error) => res.status(500).json({ error }));
 };
 
-const updateBook = (req: Request, res: Response, next: NextFunction) => {
+export const updateBook = (req: Request, res: Response, next: NextFunction) => {
   const bookId = req.params.bookId;
 
   return Book.findById(bookId)
@@ -55,7 +57,7 @@ const updateBook = (req: Request, res: Response, next: NextFunction) => {
     .catch((error) => res.status(500).json({ error }));
 };
 
-const deleteBook = (req: Request, res: Response, next: NextFunction) => {
+export const deleteBook = (req: Request, res: Response, next: NextFunction) => {
   const bookId = req.params.bookId;
 
   return Book.findByIdAndDelete(bookId)
@@ -67,4 +69,18 @@ const deleteBook = (req: Request, res: Response, next: NextFunction) => {
     .catch((error) => res.status(500).json({ error }));
 };
 
-export default { createBook, readBook, readAll, updateBook, deleteBook };
+ export const ValidateJoi = (schema: ObjectSchema) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await schema.validateAsync(req.body);
+
+      next();
+    } catch (error) {
+      Logging.error(error);
+
+      return res.status(422).json({ error });
+    }
+  };
+};
+
+
